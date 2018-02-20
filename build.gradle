@@ -1,0 +1,60 @@
+group 'com.ttn'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'                                     
+apply from: 'mytasks.gradle'           //Q6.
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+jar{                                   //Q1.
+
+    manifest{
+
+        attributes(
+                'Main-Class':'Hello'
+
+        )
+    }
+}
+sourceSets                             //Q2.
+        {
+            main{
+                java{
+                    srcDirs=['scr/main/java','src/main/java2']
+                }
+            }
+        }
+sourceSets {                           //Q3.
+    main{
+        resources
+                {
+                    exclude 'file1.txt'
+                }
+    }}
+
+
+task uberjar(type: Jar, dependsOn: [':compileJava', ':processResources']) {   //Q4.
+    from files(sourceSets.main.output.classesDir)
+    from configurations.runtime.asFileTree.files.collect { zipTree(it) }
+
+    manifest {
+        attributes 'Main-Class': 'hello'
+    }
+}
+repositories {                                                                //Q5.
+    mavenCentral()
+    maven{
+        url "http://maven.petrikainulainen.net/repo"
+    }
+}
+tasks{
+
+}
+
